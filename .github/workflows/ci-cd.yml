@@ -41,7 +41,7 @@ jobs:
 
     # Build Application
     - name: Build application
-      run: go build -o build/myapp ./cmd/myapp
+      run: go build -o build/myapp main.go
 
     # upload build-artifacts
     - name: Upload Build artifacts
