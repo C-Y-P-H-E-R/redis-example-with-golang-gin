@@ -60,8 +60,18 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    # Set up Git for deployment (use GitHub token or PAT for push access)
+    - name: Set up Git
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git remote set-url origin https://github.com/${{ github.repository }}.git
+
+    # Deploy to GitHub Pages using Personal Access Token (PAT) or GITHUB_TOKEN
     - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: build
+      env:
+        GH_TOKEN: ${{ secrets.GH_TOKEN }} # Use the secret Personal Access Token (PAT)
+      run: |
+        git add .
+        git commit -m "Deploy to gh-pages"
+        git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git HEAD:gh-pages
