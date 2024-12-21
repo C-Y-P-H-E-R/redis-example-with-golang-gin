@@ -67,11 +67,14 @@ jobs:
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
         git remote set-url origin https://github.com/${{ github.repository }}.git
 
-    # Deploy to GitHub Pages using Personal Access Token (PAT) or GITHUB_TOKEN
+    # Check if there are changes and push to gh-pages
     - name: Deploy to GitHub Pages
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }} # Use the secret Personal Access Token (PAT)
       run: |
+        # Check if there are any changes before committing
         git add .
-        git commit -m "Deploy to gh-pages"
+        git diff --cached --quiet || git commit -m "Deploy to gh-pages"
+
+        # Push changes to gh-pages
         git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git HEAD:gh-pages
