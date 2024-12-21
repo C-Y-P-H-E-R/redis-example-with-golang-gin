@@ -8,6 +8,10 @@ on:
     branches:
       - master
 
+permissions:
+  contents: write   # Ensure write access to the repository
+  pages: write      # Ensure write access to GitHub Pages
+
 jobs:
   build:
     name: Build gin exec
