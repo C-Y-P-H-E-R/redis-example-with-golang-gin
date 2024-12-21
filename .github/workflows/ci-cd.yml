@@ -60,21 +60,18 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    # Set up Git for deployment (use GitHub token or PAT for push access)
+    # Set up Git for deployment (use GitHub token for push access)
     - name: Set up Git
       run: |
         git config --global user.name "GitHub Actions"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
         git remote set-url origin https://github.com/${{ github.repository }}.git
 
-    # Check if there are changes and push to gh-pages
+    # Deploy to GitHub Pages using the GITHUB_TOKEN for authentication
     - name: Deploy to GitHub Pages
       env:
-        GH_TOKEN: ${{ secrets.GH_TOKEN }} # Use the secret Personal Access Token (PAT)
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Use the secret GitHub token
       run: |
-        # Check if there are any changes before committing
         git add .
         git diff --cached --quiet || git commit -m "Deploy to gh-pages"
-
-        # Push changes to gh-pages
-        git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git HEAD:gh-pages
+        git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:gh-pages
