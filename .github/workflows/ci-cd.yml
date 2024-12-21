@@ -1,0 +1,67 @@
+name: golang-gin ci-cd
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    name: Build gin exec
+    runs-on: ubuntu-latest
+
+    steps:
+    # checkout repository code
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # setup golang environment
+    - name: Setup Golang Env
+      uses: actions/setup-go@v4
+      with:
+        go-version: 1.21 # replace with any version
+
+    # Caching go modules
+    - name: Caching Go modules
+      uses: action/cache@v3
+      with:
+        path: |
+          ~/.cache/go-build
+          ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+
+    # install dependencies
+    - name: Install dependencies
+      run: go mod tidy
+
+    # Build Application
+    - name: Build application
+      run: go build -o build/myapp ./cmd/myapp
+
+    # upload build-artifacts
+    - name: Upload Build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: myapp
+        path: build/myapp
+
+  deploy:
+    name: Deploy golang-gin application
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/master'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: build
