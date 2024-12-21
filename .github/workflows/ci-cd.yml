@@ -26,7 +26,7 @@ jobs:
 
     # Caching go modules
     - name: Caching Go modules
-      uses: action/cache@v3
+      uses: actions/cache@v3
       with:
         path: |
           ~/.cache/go-build
